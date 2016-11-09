@@ -1,22 +1,14 @@
 ########################################################
-<<<<<<< HEAD
 ## This script explain how to run "binnedPlot.R" function. 
 ########################################################
 
 ########################################################
 ## "binnedPlot.R" can be run for 
-=======
-## This script explain how to run binnedPlot.R function. 
-########################################################
-
-##BinnedPlot.R can be run for 
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
 ##      1). One featureset One bedGraph file (one experiment) 
 ##      2). One featureset multiple bedGraph file (multiple experiment)
 ##      3). multiple featureset multiple bedGraph file 
 ########################################################
 
-<<<<<<< HEAD
 ########################################################
 ## 1). one featureset one bedgraph file 
 ########################################################
@@ -67,30 +59,6 @@ ptm <- proc.time()
 genome_varibale_rle_objects <- lapply(genomeVariableFiles, function(bdg){
         print(paste("Reading",basename(bdg),"...",sep = " "),quote = F,print.gap = 0)
         
-=======
-
-
-### set path of binnedPlot.R here. Default is current directory 
-
-source("~/Documents/scripts/R_Script/R_Git/BinnedPlot/binnedPlot.R")
-
-###prepare genome varibale data ###
-
-genomeVaribaleFilesPath <- "/Users/chiragparsania/Documents/Projects/1_My_PhD/Joshua_Lab/Sc_polII_data_pooja/"
-genomeVariableFiles<-list.files(genomeVaribaleFilesPath,pattern = "*.bedgraph$",full.names = T)
-
-## prepare gene features. Incase of multiple featureset group them by colname "clust"
-
-featureFile = "testFeatures.txt"
-featureDf <- read.table(featureFile,sep="\t",quote = "",header = T)
-featureAsList <- split(featureDf,f = featureDf$clust)
-length(featureAsList)
-
-#featureAsList <- list(featureDf)
-### create nuclesome RLE objects. Check features in genome files are joint or disjoint.
-
-genome_varibale_rle_objects <- lapply(genomeVariableFiles, function(bdg){
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
         genome_bdg <- read.table(bdg,sep="\t",quote = "")
         colnames(genome_bdg) <- c("chr","start","end","score")
         varibale_ranges <- makeGRangesFromDataFrame(genome_bdg,keep.extra.columns = T)
@@ -99,15 +67,10 @@ genome_varibale_rle_objects <- lapply(genomeVariableFiles, function(bdg){
                 genome_bdg$start <- genome_bdg$start+1
                 varibale_ranges <- makeGRangesFromDataFrame(genome_bdg,keep.extra.columns = T)
         }
-<<<<<<< HEAD
-=======
-        
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
         varibale_rle  <- mcolAsRleList(varibale_ranges ,"score")
         return(varibale_rle)
 })
 
-<<<<<<< HEAD
 # Stop the clock
 ptm <- proc.time()
 
@@ -115,11 +78,6 @@ gplots = NULL
 for (i in c(1:length(featureAsList))){
         # start the clock 
         ptm <- proc.time()
-=======
-
-gplots = NULL
-for (i in c(1:length(featureAsList))){
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
         
         selectedFeatureClust <- featureAsList[[i]]
         
@@ -129,11 +87,7 @@ for (i in c(1:length(featureAsList))){
         
         ## supply list of genomeVaribale File. For genomeVaribale binnedMatrix List will be created
         binnedMat <- lapply(genome_varibale_rle_objects, function(X){
-<<<<<<< HEAD
                 return(getBinnedMatrix(genomeVaribaleFile = X, featureFile = selectedFeatureClust,numberOfBinsInGeneBody = 200,numberOfBinsInFlanking = 50,flankingBp = 500,isVariableOVerlapped = FALSE,isFeatureDF = TRUE,isGenomeRLEobject=TRUE))        
-=======
-                return(getBinnedMatrix(genomeVaribaleFile = X, featureFile = selectedFeatureClust,numberOfBinsInGeneBody = 200,numberOfBinsInFlanking = 50,flankingBp = 100,isVariableOVerlapped = FALSE,isFeatureDF = TRUE,isGenomeRLEobject=TRUE))        
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
         })
         
         ## remove genes which have NA values 
@@ -154,7 +108,7 @@ for (i in c(1:length(featureAsList))){
         names(avgAtEachPos) <- basename(genomeVariableFiles)
         melted<- melt(avgAtEachPos)
         
-        ## for each avaraged variable create index attached to each genome varible file. 
+        ## for each avaraged variable create index attached to each genome varible file
         chk <- cbind(melted,position=rep(1:300, length(genomeVariableFiles)))
         
         print("preparing plot")
@@ -165,7 +119,6 @@ for (i in c(1:length(featureAsList))){
                 labs(y="Counts")+
                 ggtitle(paste("clust" , i , sep=""))+theme_bw()
         gplots[[i]] <- p2
-<<<<<<< HEAD
         elapsed <- (proc.time() - ptm)["elapsed"]
         print(paste("processing time for ",featureAsList[[i]],"is",elapsed,sep = " "))
         
@@ -184,14 +137,4 @@ gplots_with_ylim <- lapply(gplots , function(plt){return(plt + coord_cartesian(y
 gplots_with_label_and_title <- lapply(gplots_with_ylim , function(plt){return( plt + scale_x_continuous(breaks = seq(from=0,to=300,by=50),labels=c("-100","TSS","","","","TES","+100")) 
                                                                                + ylab(expression(atop("Average ",paste("Nulcesome occupancy")))))})
 multiplot(plotlist = gplots_with_label_and_title, cols = 2)
-=======
-}    
-
-
-length(gplots)
-gplots_with_ylim <- lapply(gplots , function(plt){return(plt + coord_cartesian(ylim=c(0, 25)))})
-gplots_with_label_and_title <- lapply(gplots_with_ylim , function(plt){return( plt + scale_x_continuous(breaks = seq(from=0,to=300,by=50),labels=c("-100","TSS","","","","TES","+100")) 
-                                                                               + ylab(expression(atop("Average ",paste("PolII")))))})
-multiplot(plotlist = gplots_with_label_and_title, cols = 1)
->>>>>>> 9ce81e6315a19e47de2ddebfd8bf97ae0702d83e
 
